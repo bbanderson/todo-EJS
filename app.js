@@ -5,6 +5,8 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
+let todoItems = [];
+
 app.get("/", function(req, res) {
 
     const today = new Date()
@@ -25,7 +27,15 @@ app.get("/", function(req, res) {
     // } else {
     //     day = "Weekday";
     // }
-    res.render("list", {kindOfDay: day, day: day})
+    
+    res.render("list", {kindOfDay: day, day: day, newList: todoItems})
+})
+
+app.post("/", function(req, res) {
+    // console.log(userInput);
+    const userInput = req.body.todo;
+    todoItems.push(userInput);
+    res.redirect("/");
 })
 
 app.listen(3000, ()=>console.log("Server has connected!"))

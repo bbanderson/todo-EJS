@@ -12,5 +12,17 @@
         <h1 style="color: blue;"><%= kindOfDay %> ToDo List 💙</h1>
     <% } %>
     <p><%= day %></p>
+    <form action="/" method="POST">
+        <input type="text" name="todo" placeholder="What to do?">
+        <button type="submit">Save</button>
+    </form>
+    <ul>
+        <li>Eat Breakfast</li>
+        <li>Eat Lunch</li>
+        <li>Eat Dinner</li>
+        <% for (let i=0; i<newList.length; i++) { %>
+            <li><%= newList[i] %></li>
+        <% } %>
+    </ul>
 </body>
 </html>
