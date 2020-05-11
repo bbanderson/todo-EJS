@@ -3,9 +3,11 @@ const bodyParser = require("body-parser");
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 let todoItems = [];
+let workItems = [];
 
 app.get("/", function(req, res) {
 
@@ -28,14 +30,25 @@ app.get("/", function(req, res) {
     //     day = "Weekday";
     // }
     
-    res.render("list", {kindOfDay: day, day: day, newList: todoItems})
+    res.render("list", {listTitle: day, newList: todoItems})
 })
 
 app.post("/", function(req, res) {
     // console.log(userInput);
-    const userInput = req.body.todo;
-    todoItems.push(userInput);
-    res.redirect("/");
+    let item = req.body.todo;
+    console.log(req.body);
+    if (req.body.list === "Work") {
+        workItems.push(item);
+        res.redirect("/work")
+    } else {
+        todoItems.push(item);
+        res.redirect("/");
+    }    
+})
+
+app.get("/work", function(req, res) {
+    res.render("list", {listTitle: "Work List", newList: workItems});
 })
 
 app.listen(3000, ()=>console.log("Server has connected!"))
+
