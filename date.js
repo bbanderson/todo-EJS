@@ -1,8 +1,5 @@
 // console.log(module);
-module.exports = getDate
-
-
-function getDate() {
+exports.getDate = function () {
   const today = new Date()
   // const currentDay = today.getDay()
   // let day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -12,7 +9,7 @@ function getDate() {
       month: 'long'
   }
   
-  const day = today.toLocaleDateString('en-US', options)
+  return today.toLocaleDateString('en-US', options)
   
   // if (currentDay === 6 || currentDay === 0) {
   //     // WEEKEND!
@@ -20,5 +17,4 @@ function getDate() {
   // } else {
   //     day = "Weekday"
   // }
-  return day
 }

@@ -12,7 +12,7 @@ const todoItems = []
 const workItems = []
 
 app.get('/', function (req, res) {
-    const day = date()
+    const day = date.getDate()
     res.render('list', { listTitle: day, newList: todoItems })
 })
 
