@@ -69,7 +69,7 @@ app.get('/:listName', function (req, res) {
                 })                    
     
                 newList.save()
-                res.redirect('/'+newList.name)
+                res.redirect('/' + newList.name)
             }
         } else {
             console.log(err);      
@@ -80,6 +80,7 @@ app.get('/:listName', function (req, res) {
 app.post('/', function (req, res) {
     // console.log(userInput)
     const userInput = req.body.todo
+    const currentList = req.body.list
     // console.log(req.body)
 
     const newItem = Item({
@@ -89,8 +90,20 @@ app.post('/', function (req, res) {
     // if (req.body.list === "Work List") {
 
     // }
-    newItem.save()
-    res.redirect("/")
+    if (currentList === date.getDate()) {
+        newItem.save()
+        res.redirect("/")
+    } else {
+        List.findOne({name: currentList}, (err, result) => {
+            if (!err) {
+                result.items.push(newItem)
+                result.save()
+                res.redirect('/' + result.name)
+            } else {
+                console.log(err);
+            }
+        })
+    }
     // if (req.body.list === 'Work List') {
     //     workItems.push(item)
     //     res.redirect('/work')
