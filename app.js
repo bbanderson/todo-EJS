@@ -38,6 +38,7 @@ const listSchema = new mongoose.Schema({
 const List = new mongoose.model('List', listSchema)
 
 app.get('/', function (req, res) {
+    
     Item.find(function (err, items) {
         if (err) {
             console.log(err)
@@ -87,9 +88,6 @@ app.post('/', function (req, res) {
         name: userInput
     })
 
-    // if (req.body.list === "Work List") {
-
-    // }
     if (currentList === date.getDate()) {
         newItem.save()
         res.redirect("/")
@@ -115,8 +113,68 @@ app.post('/', function (req, res) {
 
 app.post('/delete', function (req, res) {
     const checkedItemId = req.body.checkbox
-    Item.findByIdAndRemove(checkedItemId, err => err? console.log(err): console.log("Deleted!"))
-    res.redirect('/')
+    const listName = req.body.listForDelete
+
+    if(listName === date.getDate()) {
+        
+        // console.log(Item.find((err, items)=> items))
+        Item.find((err, items) => {
+            console.log(items, checkedItemId);
+            
+            if (!err) {
+                // const fileterdItems = items.filter(item => {
+                //     return String(item._id) !== String(checkedItemId)
+                // })
+                // items = fileterdItems
+                
+                Item.deleteOne({_id: checkedItemId}, err=> err?console.log(err):console.log("Good"))
+                res.redirect('/')
+            }
+        })
+        
+
+    } else {
+
+    List.findOne({name: listName}, (err, result) => {
+        
+        let items = result.items
+        const filteredItems = items.filter(item => {
+            return String(item._id) !== String(checkedItemId)
+            // item.find({name:"dd"})
+        })
+        items = filteredItems
+        console.log(items);
+        
+        result.updateOne({items: items}, {items: filteredItems}, err=>console.log(err))
+        if (items.length === 0) {
+            res.redirect('/')
+            result.deleteOne({name: listName}, err=> console.log(err))
+        } else {
+            res.redirect('/' + listName)
+        }
+        
+        if (!err) {
+            // console.log(result.itemsfindOne({name:"Breathed"}));
+            
+            // if (result.items._id === checkedItemId) {
+            //     console.log(checkedItemId);
+                
+                // result.items.deleteOne({_id: checkedItemId}, (err) => err ? console.log(err) : console.log("Deleted"))
+                // res.redirect('/' + listName)
+            // }
+            // const filteredArray = result["items"].filter(element => {
+            //     return element._id !== checkedItemId
+            // })
+            // if (filteredArray) {
+            //     result = filteredArray
+            // }
+            
+        } else {
+            console.log(err);
+        }
+    })
+}
+    // Item.findByIdAndRemove(checkedItemId, err => err? console.log(err): console.log("Deleted!"))
 })
 
 app.get('/work', function (req, res) {
