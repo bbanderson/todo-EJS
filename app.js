@@ -37,24 +37,41 @@ app.get('/', function (req, res) {
             if (items.length === 0) {
                 Item.insertMany([slept, breathe, blink], err => err? console.log(err) : console.log("Added!"))
                 res.redirect("/")
-            }
-            const day = date.getDate()
-            res.render('list', { listTitle: day, newList: items })
+            } else {
+                const day = date.getDate()
+                res.render('list', { listTitle: day, newList: items })
+            }       
         }
     })
 })
 
 app.post('/', function (req, res) {
     // console.log(userInput)
-    const item = req.body.todo
+    const userInput = req.body.todo
     // console.log(req.body)
-    if (req.body.list === 'Work List') {
-        workItems.push(item)
-        res.redirect('/work')
-    } else {
-        todoItems.push(item)
-        res.redirect('/')
-    }
+
+    const newItem = Item({
+        name: userInput
+    })
+
+    // if (req.body.list === "Work List") {
+
+    // }
+    newItem.save()
+    res.redirect("/")
+    // if (req.body.list === 'Work List') {
+    //     workItems.push(item)
+    //     res.redirect('/work')
+    // } else {
+    //     todoItems.push(item)
+    //     res.redirect('/')
+    // }
+})
+
+app.post('/delete', function (req, res) {
+    const checkedItemId = req.body.checkbox
+    Item.findByIdAndRemove(checkedItemId, err => err? console.log(err): console.log("Deleted!"))
+    res.redirect('/')
 })
 
 app.get('/work', function (req, res) {
