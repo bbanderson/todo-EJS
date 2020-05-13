@@ -28,6 +28,14 @@ const blink = new Item({
     name: "Blinked Eyes"
 })
 
+const defaultItems = [slept, breathe, blink]
+
+const listSchema = new mongoose.Schema({
+    name: String,
+    items: [itemSchema]
+})
+
+const List = new mongoose.model('List', listSchema)
 
 app.get('/', function (req, res) {
     Item.find(function (err, items) {
@@ -35,13 +43,37 @@ app.get('/', function (req, res) {
             console.log(err)
         } else {
             if (items.length === 0) {
-                Item.insertMany([slept, breathe, blink], err => err? console.log(err) : console.log("Added!"))
+                Item.insertMany(defaultItems, err => err? console.log(err) : console.log("Added!"))
                 res.redirect("/")
             } else {
                 const day = date.getDate()
                 res.render('list', { listTitle: day, newList: items })
             }       
         }
+    })
+})
+
+app.get('/:listName', function (req, res) {
+    const newListName = req.params.listName
+
+    List.findOne({name:newListName}, (err, existListName) => {
+        if (!err) {
+            if (existListName) {
+                console.log("The list is already exist.");
+                res.render('list', {listTitle: existListName.name, newList: existListName.items})
+            } else {
+                console.log("New List"); 
+                const newList = new List({
+                    name: newListName,
+                    items: defaultItems
+                })                    
+    
+                newList.save()
+                res.redirect('/'+newList.name)
+            }
+        } else {
+            console.log(err);      
+        }      
     })
 })
 
