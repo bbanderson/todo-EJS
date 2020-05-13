@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const _ = require('lodash')
 
 const date = require(__dirname + '/date.js')
 
@@ -8,7 +9,7 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.set('view engine', 'ejs')
-mongoose.connect('mongodb://localhost:27017/todoDB', {useNewUrlParser:true, useUnifiedTopology:true})
+mongoose.connect('mongodb+srv://admin-bbanderson:1111@cluster0-v9rqf.mongodb.net/todoDB', {useNewUrlParser:true, useUnifiedTopology:true})
 
 const itemSchema = new mongoose.Schema({
     name: String
@@ -55,7 +56,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/:listName', function (req, res) {
-    const newListName = req.params.listName
+    const newListName = _.capitalize(req.params.listName)
 
     List.findOne({name:newListName}, (err, existListName) => {
         if (!err) {
@@ -107,7 +108,7 @@ app.post('/', function (req, res) {
     //     res.redirect('/work')
     // } else {
     //     todoItems.push(item)
-    //     res.redirect('/')
+    //     res.redirect('/') 
     // }
 })
 
